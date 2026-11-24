@@ -30,11 +30,6 @@ log = structlog.get_logger()
 router = APIRouter(prefix="/embeddings", tags=["embeddings"])
 
 
-@router.post(
-    "/ingest",
-    response_model=IngestResponse,
-    responses={409: {"description": "Document already ingested"}},
-)
 async def ingest(
     request: IngestRequest,
     service: RagIngestService | None = Depends(get_rag_ingest_service),

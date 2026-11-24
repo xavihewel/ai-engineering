@@ -8,7 +8,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from slowapi.errors import RateLimitExceeded
 
 from app.config import get_settings
-from app.api.embeddings import router as embeddings_router
+from app.api.embeddings import router as embeddings_router, ingest as legacy_embeddings_ingest
+from app.dependencies import get_rag_ingest_service
+from app.embedding_pipeline.router import create_router as create_embeddings_ingest_router
 from app.api.eval_reports import router as eval_reports_router
 from app.api.health import router as health_router
 from app.api.search import router as search_router
@@ -241,6 +243,10 @@ app.include_router(estimations.router)
 app.include_router(sessions.router)
 app.include_router(ingestion.router)
 app.include_router(embeddings_router)
+app.include_router(
+    create_embeddings_ingest_router(legacy_embeddings_ingest, get_rag_ingest_service),
+    prefix="/embeddings",
+)
 app.include_router(corpus_index_router)
 app.include_router(search_router)
 app.include_router(config_api.router)
