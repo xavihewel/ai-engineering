@@ -273,15 +273,17 @@ Con el sample completo: 17 presupuestos → 60 chunks (`text-embedding-3-small`,
 Sanity check de los embeddings: embebe dos textos y devuelve su similitud coseno (calculada a mano, sin numpy). Reutiliza `OpenAIEmbedder`.
 
 ```bash
-# Fuera del contenedor (desde ai-service/, con el .env cargado):
+# Fuera del contenedor (desde ai-service/; configura OPENAI_API_KEY en ai-service/.env):
 uv run python scripts/compare.py \
   --text-a "OAuth 2.0 authentication backend for fintech" \
   --text-b "JWT-based authorization service for banking app"
 
-# Dentro del contenedor (scripts/ está bind-montado en docker-compose.yml):
+# Dentro del contenedor (desde la raíz del repositorio, con ai-service arrancado):
 docker compose exec ai-service python scripts/compare.py \
   --text-a "..." --text-b "..."
 ```
+
+El script carga `ai-service/.env` sin sobrescribir variables de entorno existentes. En Docker, configura `OPENAI_API_KEY` en el `.env` de la raíz utilizado por Compose. Cada ejecución llama a la API de OpenAI y requiere una clave válida.
 
 Los resultados de las tres parejas de validación del enunciado están en [`app/generation/rag/SANITY_CHECK.md`](app/generation/rag/SANITY_CHECK.md).
 
